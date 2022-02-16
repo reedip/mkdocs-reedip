@@ -20,10 +20,11 @@ pipeline {
     }
     post {
         always {
-            sh 'docker images |grep mkdocs|awk '{print $3}'|xargs docker image rm --force'
+            sh "docker images |grep mkdocs|awk '{print \$3}'|xargs docker image rm --force"
             echo 'Removed the created local dockerfile'
         }
         success {
             echo 'Build & test succeeded'
         }
+    }
 }
