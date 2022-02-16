@@ -27,8 +27,3 @@ pipeline {
             echo 'Build & test succeeded'
         }
 }
-
-# Declaritive approach
-# Code checkout is automated in the Declaritive approach
-# We start a pipeline to service Pipeline as Code
-# Run on any agent, which can be a node or an executor , support all entities of a multiOS Jenkins cluster
