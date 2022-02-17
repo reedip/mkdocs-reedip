@@ -1,31 +1,34 @@
-#! /bin/sh
+#!/bin/bash
 
-echo "Please pass the local directory which you want to use to create the mkdocs website"
-read TEST_PATH
-echo "Please pass the port where the website would be served"
-read HOST_PORT
-PARENT_DIR="$(dirname "$TEST_PATH")"
-TEST_DIR="$(basename "$TEST_PATH")"
-cd $TEST_PATH
-
-## Running the Produce command
-IMAGE_ID=`docker images|grep mkdoc|awk '{print $3}'`
-if [ -z $IMAGE_ID ]
+if [ $# -ne 2 ]
 then
-    echo "Please build the Image first before running mkdockerize"
+    echo "ERROR, you need to pass 2 arguments: Action (serve/produce) and Dir location"
     exit 1
 fi
-
-echo "Producing the website with $IMAGE_ID"
-docker run -v $PARENT_DIR:/opt $IMAGE_ID produce $TEST_DIR
-if [ $? -eq 0 ]
+if [ "$1" = "serve" ]
 then
-    echo "Serving the website now"
-    ## Running the serve command
-    find . -name 'mkdocs_output_*.tar.gz'|xargs docker run -d -p 8000:$HOST_PORT -v $PWD:/opt $IMAGE_ID serve 
+    # Remove old doc output, and recreate it. Then untar the tar file, and serve it on 8000
+    rm -rf /tmp/docs_output
+    mkdir -p /tmp/docs_output
+    tar zxvf /opt/$2  --directory /tmp/docs_output 2>&1 1>/dev/null
+    cd /tmp/docs_output/ 
+    ls -alrt
+    mkdocs serve -a 0.0.0.0:8000 
+
+elif [ "$1" = "produce" ]
+then
+    cd /opt/$2 2>&1 1>/dev/null
+    ts=`date +%s`
+    mkdocs build -c -q -s -dmkdocs_output
+    tar czvf mkdocs_output_$ts.tar.gz * 2>&1 1>/dev/null
+    rm -rf mkdocs_output
+    rm -rf /opt/mkdocs_output*.tar.gz
+    mv mkdocs_output_$ts.tar.gz /opt
+    echo "Output file created successfully, please check the local directory for mkdocs_output_$ts.tar.gz"
+    cd -
+else
+    echo "Wrong arguments passed, please pass produce/serve or mkdocs"
 fi
 
-if [ $? -eq 0 ]
-then
-    echo "Website being served, please use docker ps to see the running container and use docker stop/docker rm to stop it"
-fi
+
+

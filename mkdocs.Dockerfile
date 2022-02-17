@@ -12,11 +12,11 @@ ENV DOCS_DIRECTORY='/mkdocs' \
 RUN pip install --upgrade pip && \
     pip install mkdocs
 
-ADD startUp.sh /
+ADD mkdockerize.sh /
 
-RUN chmod 755 /startUp.sh
+RUN chmod 755 /mkdockerize.sh
 
 EXPOSE 8000
 
-ENTRYPOINT ["/startUp.sh"]
+ENTRYPOINT ["/mkdockerize.sh"]
 

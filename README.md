@@ -21,6 +21,7 @@ Parameter used here:
 ## Creating the Website 
 
 We can build the website using the below command
+
 `docker run -v $BASE_DIR_WHERE_LOCAL_DIR_LIES:/opt mkdocs_test:$BUILD_NUMBER produce $LOCAL_DIRECTORY_WITH_BASE_WEBSITE_FILE`
 
 Internally this command will call the shell script startUp.sh which will build produce the website.
@@ -35,6 +36,8 @@ The parameters for this website include:
 - BUILD_NUMBER: The Build Number which was used to create the tag for the mkdocs_test image
 
 ## Running the website
+You can build the website using the below command
+
 `docker run -p 8000:$HOST_PORT -d -v $BASE_DIR_WHERE_TAR_FILE_LIES:/opt mkdocs_test:$BUILD_NUMBER serve mkdocs_output_$EPOCH.tar.gz`
 
 - BASE_DIR_WHERE_LOCAL_DIR_LIES: This is the directory which would be mounted onto /opt of the docker image.
@@ -44,7 +47,33 @@ The parameters for this website include:
 
 - EPOCH: This is the naming convention used for mkdocs_output's tar file
 
-### Scope of Improvement:
+## Using the wrapper.sh:
+The wrapper.sh takes in 2 input parameters which are 
+a) Path to the Valid MkDocs Project
+b) Host Port where the code will be deployed.
+
+Just running the warpper.sh would be enough to deploy the whole code in one go
+
+```
+$ sh wrapper.sh 
+Please pass the local directory which you want to use to create the mkdocs website
+mkdocs-reedip/test
+Please pass the port where the website would be served
+8010
+Producing the website with c291dd2888f9
+Output file created successfully, please check the local directory for mkdocs_output_1645082560.tar.gz
+/
+Serving the website now
+5be64c314b5453bc1bcb4beeea36547e2f2792166278b41a03e8139b52ba01dd
+Website being served, please use docker ps to see the running container and use docker stop/docker rm to stop it
+$ docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                              NAMES
+5be64c314b54   c291dd2888f9   "/mkdockerize.sh ser…"   4 seconds ago   Up 3 seconds   8000/tcp, 0.0.0.0:8000->8010/tcp   reverent_brahmagupta
+```
+
+# Appendix:
+
+#### Scope of Improvement:
 
 This code can be improved much further, including:
 - Path independence: We should not be tied up with the BASE_DIR_WHERE_LOCAL_DIR_LIES. We can load it directly by making the Entrypoint script smarter
@@ -55,10 +84,7 @@ This code can be improved much further, including:
 - Using inbuilt libraries in JenkinsFile: The Jenkinsfile created here uses a lot of shell scripting but can use the docker library directly to reduce some code. 
   The reason for using the shell script here was to create a deliverable as soon as possible, with all working functionality.
 
-- Using mkdockerize.sh in the Jenkinsfile: I could have used the mkdockerize.sh to make the Jenkins file easier, but I found using the docker commands more explanatory
-  and mkdockerize a bit abstract for the Jenkinsfile. Thats just a personal preference, but yes, the code can definitely be made prettier
-
-### Points to Note:
+#### Points to Note:
 -  The requirement was not completely clear from my side as to what the STDOUT  for produce would be, would it be STDOUT the tar file complete, or just the name
     I did the best thing I can to make it simple, but if there was a client interaction for use-case confirmation, it would have been great
 -  The requirement mentioned in the document is that if docker run -p 8000:8000 is used, then mkdocs's 8000 port is forwarded to the host's 8000. I considered this in the way
