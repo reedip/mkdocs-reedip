@@ -54,6 +54,23 @@ b) Host Port where the code will be deployed.
 
 Just running the warpper.sh would be enough to deploy the whole code in one go
 
+```
+$ sh wrapper.sh 
+Please pass the local directory which you want to use to create the mkdocs website
+mkdocs-reedip/test
+Please pass the port where the website would be served
+8010
+Producing the website with c291dd2888f9
+Output file created successfully, please check the local directory for mkdocs_output_1645082560.tar.gz
+/
+Serving the website now
+5be64c314b5453bc1bcb4beeea36547e2f2792166278b41a03e8139b52ba01dd
+Website being served, please use docker ps to see the running container and use docker stop/docker rm to stop it
+$ docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                              NAMES
+5be64c314b54   c291dd2888f9   "/mkdockerize.sh ser…"   4 seconds ago   Up 3 seconds   8000/tcp, 0.0.0.0:8000->8010/tcp   reverent_brahmagupta
+```
+
 ### Appendix:
 
 #### Scope of Improvement:

@@ -20,6 +20,7 @@ echo "Producing the website with $IMAGE_ID"
 docker run -v $PARENT_DIR:/opt $IMAGE_ID produce $TEST_DIR
 if [ $? -eq 0 ]
 then
+    cd $PARENT_DIR
     echo "Serving the website now"
     ## Running the serve command
     find . -name 'mkdocs_output_*.tar.gz'|xargs docker run -d -p 8000:$HOST_PORT -v $PWD:/opt $IMAGE_ID serve 
