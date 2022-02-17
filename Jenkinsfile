@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     stages {
         stage('build') {
             steps {
@@ -26,7 +25,7 @@ pipeline {
             echo'Remove all existing images and containers after testinng for cleanup'
             sh "docker ps |grep mkdocs_test|awk '{ print \$1}'|xargs docker kill"
             sh "docker images |grep mkdocs|awk '{print \$3}'|xargs docker image rm --force"
-            echo 'Removed the created local dockerfile'
+            echo 'Removed the created local docker image'
         }
         success {
             echo 'Build & test succeeded'

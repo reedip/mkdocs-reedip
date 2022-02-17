@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if [ $# -lt 1 ]
+if [ $# -ne 2 ]
 then
-    echo "ERROR, you need to pass more than one arg and it should be serve/produce"
+    echo "ERROR, you need to pass 2 arguments: Action (serve/produce) and Dir location"
     exit 1
 fi
-echo $1
 if [ "$1" = "serve" ]
 then
+    # Remove old doc output, and recreate it. Then untar the tar file, and serve it on 8000
     rm -rf /tmp/docs_output
     mkdir -p /tmp/docs_output
     tar zxvf /opt/$2  --directory /tmp/docs_output 2>&1 1>/dev/null
@@ -32,8 +32,3 @@ fi
 
 
 
-# Points to Note:
-# a) The requirement was not completely clear from my side as to what the STDOUT  for produce would be, would it be STDOUT the tar file complete, or just the name
-#    I did the best thing I can to make it simple, but if there was a client interaction for use-case confirmation, it would have been great
-# b) The requirement mentioned in the document is that if docker run -p 8000:8000 is used, then mkdocs's 8000 port is forwarded to the host's 8000. I considered this in the way
-#    that the mkdocs will internally continue to use 8000 port, but its mapping can be done to any host port. So docker run -p 8001:8000 will map 8001 of Host to 8000 of docker container
