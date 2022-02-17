@@ -5,8 +5,13 @@ read $path
 parent="$(basename "$(dirname "$filepath")")"
 cd $path
 
-# Running the Produce command
+## Running the Produce command
+IMAGE_ID=`docker image|grep mkdoc|awk '{print $3}'`
+docker run -v $PWD:/opt $IMAGE_ID produce $2
 
-# Running the serve command
+## Running the serve command
+find . -name 'mkdocs_output_*.tar.gz'|xargs docker run -p 8000:$HOST_PORT -d -v $PWD:/opt $IMAGE_ID serve 
+
+
 
 
